@@ -4,14 +4,15 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.util.Scanner;
 
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.xml.sax.SAXException;
+
 public class main {
 	public static String currentUser="";
 	public static int currentRole=0; //nivel de permiso 0=USERL//1=USERA//2=ADMIN
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParserConfigurationException, SAXException {
 		// TODO Auto-generated method stub
-		String jdbcUrl = "jdbc:mysql://localhost:3306/peliculas?useSSL=false";
-		String user = "root";
-		String pass = "";
 		boolean proceed = false;
 		boolean logged = false;
 		String userinput = "";
@@ -21,17 +22,18 @@ public class main {
 		System.out.println("FILMOTECA V 1.0 _ HÉCTOR CANTOS");
 		System.out.println("-------------------------------");
 		System.out.println("Leyendo archivo de configuración....");
-		//proceed = dbengine.configLoad();
-		
+		proceed = XML_Loader.xmlread();
+		Connection conn;
 		proceed = true; //debug
 		while(proceed) {
 			System.out.println("Conectando a base de datos...");
-			//comprobación conexion a bdd (return proceed si/no+verbose de excepcion)
-			//proceed = dbengine.checkConnection();
 			try {
-				Connection conn = DriverManager.getConnection(jdbcUrl, user, pass);
+				conn = DriverManager.getConnection(UserEngine.DB_USUARIOS, UserEngine.USUARIOS_USER, UserEngine.USUARIOS_PASS);
+				conn.close();
+				conn = DriverManager.getConnection(UserEngine.DB_USUARIOS, UserEngine.USUARIOS_USER, UserEngine.USUARIOS_PASS);
 				System.out.println("Exito al conectar a la base");
 				proceed = true;
+				conn.close();
 			}
 			catch(Exception e){
 				System.out.println("Error al conectar a la base");

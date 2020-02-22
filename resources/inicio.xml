@@ -1,0 +1,13 @@
+<?xml version="1.0"?> 
+<BBDD>
+	<USUARIOS>
+		<DIRECCION>jdbc:mysql://localhost/Usuarios?serverTimezone=Europe/Amsterdam</DIRECCION>
+		<USUARIO>root</USUARIO>
+		<PASS></PASS>
+	</USUARIOS>
+	<PELICULAS>
+		<DIRECCION>jdbc:mysql://localhost/Peliculas?serverTimezone=Europe/Amsterdam</DIRECCION>
+		<USUARIO>root</USUARIO>
+		<PASS></PASS>
+	</PELICULAS>
+</BBDD>

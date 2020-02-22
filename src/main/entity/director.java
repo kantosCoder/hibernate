@@ -19,11 +19,11 @@ public class director {
 	private String Nombre;
 
 	@Column(name="Habilitado")
-	private int Habilitado;
+	private boolean Habilitado;
 
 	public director()
 	{}	
-	public director(String nombre, int habilitado) {
+	public director(String nombre, boolean habilitado) {
 		Nombre = nombre;
 		Habilitado = habilitado;
 	}
@@ -39,10 +39,10 @@ public class director {
 	public void setNombre(String nombre) {
 		Nombre = nombre;
 	}
-	public int getHabilitado() {
+	public boolean getHabilitado() {
 		return Habilitado;
 	}
-	public void setHabilitado(int habilitado) {
+	public void setHabilitado(boolean habilitado) {
 		Habilitado = habilitado;
 	}
 	

@@ -1,0 +1,3 @@
+Se han de ejecutar los scripts de creacion de db y inserts para
+que el programa funcione con normalidad.
+La carpeta resources a C:\DAM\ (el xml es de doble base de datos)
