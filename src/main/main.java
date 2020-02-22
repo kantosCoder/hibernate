@@ -12,7 +12,9 @@ public class main {
 	public static String currentUser="";
 	public static int currentRole=0; //nivel de permiso 0=USERL//1=USERA//2=ADMIN
 	public static void main(String[] args) throws ParserConfigurationException, SAXException {
-		// TODO Auto-generated method stub
+		//!\TODO LIST
+		// falta escribir en el XML, acabar el metodo de login
+		//
 		boolean proceed = false;
 		boolean logged = false;
 		String userinput = "";
@@ -22,7 +24,8 @@ public class main {
 		System.out.println("FILMOTECA V 1.0 _ HÉCTOR CANTOS");
 		System.out.println("-------------------------------");
 		System.out.println("Leyendo archivo de configuración....");
-		proceed = XML_Loader.xmlread();
+		//proceed = XML_Loader.xmlread(); solventar
+		proceed = true;
 		Connection conn;
 		proceed = true; //debug
 		while(proceed) {
@@ -32,8 +35,8 @@ public class main {
 				conn.close();
 				conn = DriverManager.getConnection(UserEngine.DB_USUARIOS, UserEngine.USUARIOS_USER, UserEngine.USUARIOS_PASS);
 				System.out.println("Exito al conectar a la base");
-				proceed = true;
 				conn.close();
+				proceed = true;
 			}
 			catch(Exception e){
 				System.out.println("Error al conectar a la base");
@@ -52,8 +55,7 @@ public class main {
 					System.out.println("");
 				}
 				else {
-					//logged = dbengine.login(userinput,userinput2); crear funciones
-					logged = true;
+					logged = UserEngine.login(userinput,userinput2);//acabar el metodo de login...
 					currentUser = userinput;
 				}
 				}//fin de login (logged)
@@ -72,10 +74,10 @@ public class main {
 					userinput = input.nextLine();
 					switch(userinput) { //ejecuta la opción necesaria
 						case"0":
-							//dbengine.userLister(currentRole); listar con hibernate
+							UserEngine.userLister(currentRole); //terminar
 						break;
 						case"1":
-							//dbengine.filmLister(currentRole); listar con hibernate
+							FilmEngine.filmLister(currentRole); //terminar
 						break;
 						case"2":
 							System.out.println("");
@@ -99,7 +101,7 @@ public class main {
 							data[4]=input.nextLine();
 							System.out.println("Escribe una breve descripción/sinopsis sobre la película (Por defecto: Sin especificar)");
 							data[5]=input.nextLine();
-							//dbengine.filmInsertion(currentRole, data[0], data[1], data[2], data[3], data[4], data[5]);//insercion con hibernate
+							FilmEngine.filmBuilder(currentRole, data[0], data[1], data[2], data[3], data[4], data[5]);//insercion con hibernate
 							for(int i=0; i<6; i++) {//limpieza del array
 								data[i]="";
 							}
@@ -116,7 +118,7 @@ public class main {
 								System.out.println("No se ha eliminado el usuario porque no se especificó ninguno.");
 							}
 							else {
-								///dbengine.filmDestroy(currentRole,userinput); destruir con hibernate
+								FilmEngine.filmDestroy(currentRole,userinput);
 							}
 							
 						break;
@@ -126,7 +128,7 @@ public class main {
 							System.out.println("Confirma la nueva contraseña:");
 							userinput2 = input.nextLine();
 							if(userinput.equals(userinput2)) {
-								//dbengine.passwordUpdate(userinput); hibernate
+								UserEngine.passwordUpdate(userinput);//TERMINAR...
 							}
 							else {
 							System.out.println("Error al cambiar la contraseña: las contraseñas no coinciden.");
@@ -146,7 +148,7 @@ public class main {
 							System.out.println("(Escribe el nombre del ROL conforme se muestra o el número correspondiente, por defecto: USERL)");
 							data[3]=input.nextLine();
 							if(data[1].equals(1)) {
-								//dbengine.userInsertion(currentRole, data[0], data[1], data[3]); hibernate
+								UserEngine.userBuilder(currentRole, data[0], data[1], data[3]);//TERMNINAR
 							}
 							else {
 								System.out.println("Error, las contraseñas no coinciden");
@@ -167,7 +169,7 @@ public class main {
 								System.out.println("No se ha eliminado el usuario porque no se especificó ninguno.");
 							}
 							else {
-								//dbengine.userDestroy(currentRole,userinput); hibernate
+								UserEngine.userDestroy(currentRole,userinput); //TERMINAR
 							}
 						break;
 						case"7":

@@ -3,31 +3,31 @@ package main;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-
+import java.util.List;
 import main.entity.director;
 import main.entity.pelicula;
 
 public class FilmEngine {
 	//CFG BASE DE DATOS
-		static String DB_PELICULAS="";
-		static String PELICULAS_USER = "";
+		static String DB_PELICULAS="jdbc:mysql://localhost/Peliculas?serverTimezone=Europe/Amsterdam";
+		static String PELICULAS_USER = "root";
 		static String PELICULAS_PASS = "";
+		static director currentdirector = new director();
 	// session factories
-	SessionFactory factory_pelicula = new Configuration()
+	static SessionFactory factory_pelicula = new Configuration()
 			.configure("hibernate.cfg.xml")
 			.addAnnotatedClass(pelicula.class)
 			.buildSessionFactory();
-	SessionFactory factory_director = new Configuration()
+	static SessionFactory factory_director = new Configuration()
 			.configure("hibernate.cfg.xml")
 			.addAnnotatedClass(director.class)
 			.buildSessionFactory();
 	// sessions
-	Session session;
+	static Session session;
 	
 	//metodos
 	//crear pelicula
-	public void filmBuilder(String nombre, String director, String genero, String genero_secundario, String anyo, String descripcion,
-			String caratula, String uRL_IMDB, boolean habilitado) {
+	public static void filmBuilder(int permiso, String nombre, String director, String genero, String genero_secundario, String anyo, String descripcion) {
 		boolean goodtogo = false;
 		boolean exists = false;
 		boolean newdirector = false;
@@ -53,9 +53,16 @@ public class FilmEngine {
 		//creacion nuevo director
 		if(newdirector) {
 			directorBuilder(director,true);
+			directorid = currentdirector.getId();
 		}
-		pelicula build = new pelicula(nombre, Integer.parseInt(director), Integer.parseInt(genero), Integer.parseInt(genero_secundario), Integer.parseInt(anyo), descripcion,
-				caratula, uRL_IMDB, true);
+		else {
+			//obtener id y asignarla al directorid
+		}
+		//obtener id del director
+		
+		
+		pelicula build = new pelicula(nombre, directorid, Integer.parseInt(genero), Integer.parseInt(genero_secundario),
+				Integer.parseInt(anyo), descripcion,"C:\\DAM\\default.jpg\\","https://www.imdb.com/",true);
 		try {
 			session = factory_pelicula.getCurrentSession();
 			session.beginTransaction();
@@ -67,12 +74,11 @@ public class FilmEngine {
 			System.out.println("Ha ocurrido un error al insertar la pelicula");
 		}
 		finally {
-			session.close();
 			factory_pelicula.close();
 		}
 	}
 	//crear director
-		public void directorBuilder(String nombre, boolean habilitado) {
+		public static void directorBuilder(String nombre, boolean habilitado) {
 			director build = new director(nombre, habilitado);
 			try {
 				session = factory_director.getCurrentSession();
@@ -80,13 +86,19 @@ public class FilmEngine {
 				session.save(build);
 				session.getTransaction().commit();
 				System.out.println("El director se insertó correctamente");
+				currentdirector = build;
 				}
 			catch(Exception e) {
 				System.out.println("Ha ocurrido un error al insertar el director");
 			}
 			finally {
-				session.close();
 				factory_director.close();
 			}
-		}	
+		}
+		public static void filmLister(int permiso) {
+			
+		}
+		public static void filmDestroy(int permiso, String name) {
+			
+		}
 }
