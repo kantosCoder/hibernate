@@ -57,7 +57,7 @@ public class main {
 				}//fin de login (logged)
 				while(logged) {//comienza el menú
 					System.out.println("----------------------------");
-					System.out.println("Bienvenido,'"+currentUser+", 'elige una opción");
+					System.out.println("Bienvenido,'"+currentUser+"', elige una opción");
 					System.out.println("----------------------------");
 					System.out.println("0) Listar usuarios almacenados");//extra
 					System.out.println("1) Listar peliculas almacenadas.");
@@ -114,7 +114,7 @@ public class main {
 								System.out.println("No se ha eliminado el usuario porque no se especificó ninguno.");
 							}
 							else {
-								dbengine.filmDestroy(currentRole,userinput);
+								///dbengine.filmDestroy(currentRole,userinput); destruir con hibernate
 							}
 							
 						break;
@@ -124,7 +124,7 @@ public class main {
 							System.out.println("Confirma la nueva contraseña:");
 							userinput2 = input.nextLine();
 							if(userinput.equals(userinput2)) {
-								dbengine.passwordUpdate(userinput);
+								//dbengine.passwordUpdate(userinput); hibernate
 							}
 							else {
 							System.out.println("Error al cambiar la contraseña: las contraseñas no coinciden.");
@@ -144,7 +144,7 @@ public class main {
 							System.out.println("(Escribe el nombre del ROL conforme se muestra o el número correspondiente, por defecto: USERL)");
 							data[3]=input.nextLine();
 							if(data[1].equals(1)) {
-								dbengine.userInsertion(currentRole, data[0], data[1], data[3]);
+								//dbengine.userInsertion(currentRole, data[0], data[1], data[3]); hibernate
 							}
 							else {
 								System.out.println("Error, las contraseñas no coinciden");
@@ -165,7 +165,7 @@ public class main {
 								System.out.println("No se ha eliminado el usuario porque no se especificó ninguno.");
 							}
 							else {
-								dbengine.userDestroy(currentRole,userinput);
+								//dbengine.userDestroy(currentRole,userinput); hibernate
 							}
 						break;
 						case"7":
