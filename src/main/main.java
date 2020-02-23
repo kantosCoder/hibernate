@@ -21,7 +21,7 @@ public class main {
 		boolean logged = false;
 		String userinput = "";
 		String userinput2 ="";
-		String[] data = new String[6];
+		String[] data = new String[7];
 		Scanner input = new Scanner(System.in);;
 		System.out.println("FILMOTECA V 1.0 _ HÉCTOR CANTOS");
 		System.out.println("-------------------------------");
@@ -101,17 +101,20 @@ public class main {
 							System.out.println("Inserta el nombre del director de la pelicula");
 							data[1]=input.nextLine();
 							System.out.println("Inserta el genero de la pelicula [1)'accion', 2)'comedia', 3)'horror', 4)'drama' o 5)'documental']");
-							System.out.println("(Escribe el nombre del genero conforme se muestra o el número correspondiente, por defecto: accion)");
+							System.out.println("(Escribe el número correspondiente, por defecto: accion)");
 							data[2]=input.nextLine();
 							System.out.println("Inserta el genero secundario de la pelicula [1)'accion', 2)'comedia', 3)'horror', 4)'drama' o 5)'documental']");
-							System.out.println("(Escribe el nombre del genero conforme se muestra o el número correspondiente, por defecto: accion)");
+							System.out.println("(Escribe el número correspondiente, por defecto: accion)");
 							data[3]=input.nextLine();
 							System.out.println("Inserta el año de estreno de la pelicula, (por defecto año 2000)");
 							data[4]=input.nextLine();
 							System.out.println("Escribe una breve descripción/sinopsis sobre la película (Por defecto: Sin especificar)");
 							data[5]=input.nextLine();
-							FilmEngine.filmBuilder(currentRole, data[0], data[1], data[2], data[3], data[4], data[5]);
-							for(int i=0; i<6; i++) {//limpieza del array
+							System.out.println("Inserta el formato de la pelicula [1)'DVD', 2)'LaserDisc', 3)'Digital', 4)'VHS' o 5)'Betamax']");
+							System.out.println("(Escribe el número correspondiente, por defecto: DVD)");
+							data[6]=input.nextLine();
+							FilmEngine.filmBuilder(currentRole, data[0], data[1], data[2], data[3], data[4], data[5], data[6]);
+							for(int i=0; i<7; i++) {//limpieza del array
 								data[i]="";
 							}
 						break;

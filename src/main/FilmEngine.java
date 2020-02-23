@@ -21,7 +21,7 @@ public class FilmEngine {
 	static SessionFactory factory_director;
 	static SessionFactory factory_formato;
 	static SessionFactory factory_genero;
-	static SessionFactory factory_formato_pelicula;
+	static SessionFactory factory_formato_p;
 	// sessions
 	static Session session;
 	//metodos
@@ -43,22 +43,21 @@ public class FilmEngine {
 			.configure("hibernate.cfg.xml")
 			.addAnnotatedClass(genero.class)
 			.buildSessionFactory();
-	factory_formato = new Configuration()
+	factory_formato_p = new Configuration()
 			.configure("hibernate.cfg.xml")
 			.addAnnotatedClass(formato_pelicula.class)
 			.buildSessionFactory();
 	}
 	
 	//crear pelicula
-		public static void filmBuilder(int permiso, String nombre, String director, String genero, String genero_secundario, String anyo, String descripcion) {
+		public static void filmBuilder(int permiso, String nombre, String director, String genero, String genero_secundario, String anyo, String descripcion, String fmt) {
 		boolean goodtogo = false;
 		boolean exists = false;
 		boolean newdirector = true;
 		boolean newone = true;
-		int gender = 0;
-		int affected = 0;
+		int pelid = 1;
 		int directorid = 0;
-		int pointer = 0;
+		int conv = 0;
 		if(nombre.equals("")) {
 			System.out.println("Error: Debes especificar un nombre...");
 			goodtogo = false;
@@ -67,12 +66,19 @@ public class FilmEngine {
 		if (!genero.matches("[0-9]+")) {
 			genero = "1";
 		}
+		else {conv = Integer.parseInt(genero); if(conv>5||conv<5) {genero="1";}}
 		if (!genero_secundario.matches("[0-9]+")) {
 			genero_secundario = "1";
 		}
+		else {conv = Integer.parseInt(genero_secundario); if(conv>5||conv<5) {genero_secundario="1";}}
 		if (!anyo.matches("[0-9]+")) {
 			anyo = "2000";
 		}
+		else {conv = Integer.parseInt(anyo); if(conv>3000||conv<1800) {anyo="2000";}}
+		if (!fmt.matches("[0-9]+")) {
+			fmt = "1";
+		}
+		else {conv = Integer.parseInt(fmt); if(conv>5||conv<5) {fmt="1";}}
 		if(permiso==1||permiso==2) {
 			//comprobacion pelicula existe
 			try {
@@ -82,7 +88,6 @@ public class FilmEngine {
 				List<pelicula> peliculas = session.createQuery("from pelicula p where p.Nombre='"+nombre+"' and p.Anyo like "+anyo+"").getResultList();
 				for(pelicula display : peliculas) {
 					newone = false;
-					pointer = display.getId();
 				}
 				session.getTransaction().commit();
 				factory_pelicula.close();
@@ -90,7 +95,6 @@ public class FilmEngine {
 				if(newone) {
 					//comprobacion director existe
 					try {
-						reloadFactory();
 						session = factory_director.getCurrentSession();
 						session.beginTransaction();
 						List<director> directores = session.createQuery("from director d where d.Nombre='"+director+"'").getResultList();
@@ -103,7 +107,7 @@ public class FilmEngine {
 						session.close();
 						}
 					catch(Exception e) {
-						System.out.println("Ha ocurrido un error al tratar de recuperar la informacion");
+						System.out.println("1");
 					}
 					finally {
 						if(factory_director!=null) {
@@ -115,6 +119,7 @@ public class FilmEngine {
 						directorBuilder(director,true);
 						directorid = currentdirector.getId();
 					}
+					//insercion pelicula
 					pelicula build = new pelicula(nombre, directorid, Integer.parseInt(genero), Integer.parseInt(genero_secundario),
 							Integer.parseInt(anyo), descripcion,"C:\\DAM\\default.jpg\\","https://www.imdb.com/",true);
 					try {
@@ -123,19 +128,43 @@ public class FilmEngine {
 						session.beginTransaction();
 						session.save(build);
 						session.getTransaction().commit();
+						pelid = build.getId();
+						factory_pelicula.close();
+						session.close();
 						System.out.println("La pelicula se insertó correctamente");
 						}
 					catch(Exception e) {
-						System.out.println("Ha ocurrido un error al insertar la pelicula");
+						System.out.println("2");
 					}
 					finally {
-						factory_pelicula.close();
+						if(factory_pelicula!=null) {
+							factory_pelicula.close();
+						}
+					}
+					//inscripcion en relacion n:n formato
+					try {
+						System.out.println("El id de la peli es "+pelid);
+						formato_pelicula relation = new formato_pelicula(pelid,Integer.parseInt(fmt));
+						session = factory_formato_p.getCurrentSession();
+						session.beginTransaction();
+						session.save(relation);
+						session.getTransaction().commit();
+						factory_formato_p.close();
+						session.close();
+						}
+					catch(Exception e) {
+						System.out.println("3");
+					}
+					finally {
+						if(factory_formato_p!=null) {
+							factory_formato_p.close();
+						}
 					}
 				}
 				else {System.out.println("Ya hay una pelicula con ese nombre y fecha, no puedes crear otra igual.");}
 				}
 			catch(Exception e) {
-				System.out.println("Ha ocurrido un error al tratar de recuperar la informacion");
+				System.out.println("4");
 			}
 			finally {
 				if(factory_pelicula!=null) {
@@ -168,6 +197,7 @@ public class FilmEngine {
 		//listar peliculas
 		public static void filmLister(int permiso) {
 			//falta cargar el genero...
+			formato_pelicula relation = null;
 			List<director> directores = null;
 			List<pelicula> peliculas = null;
 			List<formato> formatos = null;
@@ -193,7 +223,6 @@ public class FilmEngine {
 			}
 			//carga de formatos
 			try {
-				reloadFactory();
 				session = factory_formato.getCurrentSession();
 				session.beginTransaction();
 				formatos = session.createQuery("from formato").getResultList();
@@ -205,8 +234,42 @@ public class FilmEngine {
 				System.out.println("Ha ocurrido un error al tratar de recuperar la informacion");
 			}
 			finally {
-				if(factory_director!=null) {
-					factory_director.close();
+				if(factory_formato!=null) {
+					factory_formato.close();
+				}
+			}
+			//carga de generos
+			try {
+				session = factory_genero.getCurrentSession();
+				session.beginTransaction();
+				generos = session.createQuery("from genero").getResultList();
+				session.getTransaction().commit();
+				factory_genero.close();
+				session.close();
+				}
+			catch(Exception e) {
+				System.out.println("Ha ocurrido un error al tratar de recuperar la informacion");
+			}
+			finally {
+				if(factory_genero!=null) {
+					factory_genero.close();
+				}
+			}
+			//carga de relaciones
+			try {
+				session = factory_formato_p.getCurrentSession();
+				session.beginTransaction();
+				relaciones = session.createQuery("from formato_pelicula").getResultList();
+				session.getTransaction().commit();
+				factory_formato_p.close();
+				session.close();
+				}
+			catch(Exception e) {
+				System.out.println("Ha ocurrido un error al tratar de recuperar la informacion");
+			}
+			finally {
+				if(factory_formato_p!=null) {
+					factory_formato_p.close();
 				}
 			}
 			//carga de peliculas
@@ -228,9 +291,16 @@ public class FilmEngine {
 			}
 			//muestra todos los resultados
 			for(pelicula display : peliculas) {
-				System.out.println("Titulo: "+display.getNombre()+", Director: "+directores.get(display.getDirector()-1).getNombre()+", Año: "+display.getAnyo());
+				//obtener relacion:
+				for(formato_pelicula rel : relaciones) {
+					if(display.getId()==rel.getId_pelicula()){relation = rel;}
+				}
+				System.out.println("Titulo: "+display.getNombre()+", Director: "+directores.get(display.getDirector()-1).getNombre()+", "+
+			"Generos: "+generos.get(display.getGenero()-1).getNombre()+", "+generos.get(display.getGenero_secundario()-1).getNombre()+", Año: "+display.getAnyo()+", "+
+						"Formato: "+formatos.get(relation.getId_formato()-1).getNombre()+", Sinopsis: "+display.getDescripcion());
 			}
 		}
+		
 		//eliminar pelicula
 		public static void filmDestroy(int permiso, String name) {
 			if(permiso==1||permiso==2) {

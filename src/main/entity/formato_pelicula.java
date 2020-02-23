@@ -12,6 +12,9 @@ import javax.persistence.Table;
 public class formato_pelicula {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name="Id")
+	private int Id;
+	
 	@Column(name="Id_pelicula")
 	private int Id_pelicula;
 

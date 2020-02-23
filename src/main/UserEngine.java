@@ -27,55 +27,66 @@ public class UserEngine {
 		}
 		//crear usuario
 		public static void userBuilder(int permission, String nick, String pass, String rol) {
-			usuario build = new usuario(nick, pass, Integer.parseInt(rol), "C:\\DAM\\foto.png", true);
+			int conv = 0;
+			usuario build = null;
 			boolean exists = false;
 			//comprobar si existe:
-			if(permission == 1) {
-			try {
-				reloadFactory();
-				session = factory_usuario.getCurrentSession();
-				session.beginTransaction();
-				List<usuario> usuarios = session.createQuery("from usuario u where u.Nick='"+nick+"'").getResultList();
-				session.getTransaction().commit();
-				for(usuario dload : usuarios) {
-					exists = true;
-				}
-				//crear user si no existe.
-				if(!exists) {
-					try {
-						session = factory_usuario.getCurrentSession();
-						session.beginTransaction();
-						session.save(build);
-						session.getTransaction().commit();
-						System.out.println("El nuevo usuario se creó correctamente");
-						factory_usuario.close();
-						session.close();
-						}
-					catch(Exception e) {
-						System.out.println("Ha ocurrido un error al crear el usuario");
-					}
-					finally {
-						if(factory_usuario!=null) {
-							factory_usuario.close();
-						}
-					}
-				}
-				else {
-					System.out.println("Ya existe un usuario con este nombre.");
-				}
-				
-				}
-			catch(Exception e) {
-				System.out.println("Ha ocurrido un error inesperado de conexion, intentalo de nuevo.");
+			if(nick.equals("")||pass.equals("")||rol.equals("")) {
+				System.out.println("Error, porfavor, rellena todos los datos.");
 			}
-			finally {
-				if(factory_usuario!=null) {
-					factory_usuario.close();
+			else {
+				if (!rol.matches("[0-9]+")) {
+					rol = "3";
 				}
+				else {conv = Integer.parseInt(rol); if(conv>3||conv<1) {rol="3";}}
+				build = new usuario(nick, pass, Integer.parseInt(rol), "C:\\DAM\\foto.png", true);
+				if(permission == 1) {
+				try {
+					reloadFactory();
+					session = factory_usuario.getCurrentSession();
+					session.beginTransaction();
+					List<usuario> usuarios = session.createQuery("from usuario u where u.Nick='"+nick+"'").getResultList();
+					session.getTransaction().commit();
+					for(usuario dload : usuarios) {
+						exists = true;
+					}
+					//crear user si no existe.
+					if(!exists) {
+						try {
+							session = factory_usuario.getCurrentSession();
+							session.beginTransaction();
+							session.save(build);
+							session.getTransaction().commit();
+							System.out.println("El nuevo usuario se creó correctamente");
+							factory_usuario.close();
+							session.close();
+							}
+						catch(Exception e) {
+							System.out.println("Ha ocurrido un error al crear el usuario");
+						}
+						finally {
+							if(factory_usuario!=null) {
+								factory_usuario.close();
+							}
+						}
+					}
+					else {
+						System.out.println("Ya existe un usuario con este nombre.");
+					}
+					
+					}
+				catch(Exception e) {
+					System.out.println("Ha ocurrido un error inesperado de conexion, intentalo de nuevo.");
+				}
+				finally {
+					if(factory_usuario!=null) {
+						factory_usuario.close();
+					}
+				}
+			}
+			else {System.out.println("No tienes permiso para crear usuarios");}
 			}
 		}
-		else {System.out.println("No tienes permiso para crear usuarios");}
-		}	
 		//listar usuarios
 		public static void userLister(int permisos) {
 			try {

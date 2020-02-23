@@ -48,6 +48,7 @@ create table Formato (
  );
 
  create table Formato_pelicula (
+Id int NOT NULL auto_increment,
 Id_pelicula int,
 Id_formato int,
 foreign key (Id_pelicula)
@@ -55,7 +56,7 @@ references Pelicula (Id),
 foreign key (Id_formato)
 references Formato (Id),
 constraint pk_formato_pelicula
-Primary key (Id_pelicula, Id_formato)
+	Primary key (Id)
 ); 
 
 Create database Usuarios;
