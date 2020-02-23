@@ -6,11 +6,13 @@ import java.util.Scanner;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.hibernate.HibernateException;
 import org.xml.sax.SAXException;
 
 public class main {
 	public static String currentUser="";
 	public static int currentRole=0; //nivel de permiso 0=USERL//1=USERA//2=ADMIN
+	public static int userid = 0;
 	public static void main(String[] args) throws ParserConfigurationException, SAXException {
 		//!\TODO LIST
 		// falta escribir en el XML, acabar el metodo de login
@@ -24,11 +26,11 @@ public class main {
 		System.out.println("FILMOTECA V 1.0 _ HÉCTOR CANTOS");
 		System.out.println("-------------------------------");
 		System.out.println("Leyendo archivo de configuración....");
-		//proceed = XML_Loader.xmlread(); solventar
+		proceed = XML_Loader.xmlread();
 		proceed = true;
 		Connection conn;
-		proceed = true; //debug
 		while(proceed) {
+			//CHECH DE BASE DE DATOS
 			System.out.println("Conectando a base de datos...");
 			try {
 				conn = DriverManager.getConnection(UserEngine.DB_USUARIOS, UserEngine.USUARIOS_USER, UserEngine.USUARIOS_PASS);
@@ -36,12 +38,19 @@ public class main {
 				conn = DriverManager.getConnection(UserEngine.DB_USUARIOS, UserEngine.USUARIOS_USER, UserEngine.USUARIOS_PASS);
 				System.out.println("Exito al conectar a la base");
 				conn.close();
-				proceed = true;
+			}
+			catch (ExceptionInInitializerError EX){
+			      System.out.println("Ha ocurrido un error en la conexion.");
+			      System.out.println("Por favor, compruebe que la base de datos está funcionando");
+			      System.out.println("y es accesible. Compruebe también que los ajustes de conexión");
+			      System.out.println("del archivo de configuración \"inicio.xml\" son correctos.");
+			      proceed = false;
 			}
 			catch(Exception e){
 				System.out.println("Error al conectar a la base");
 				proceed = false;
 			}
+			//CHECK OK, SE PROCEDE AL MENU
 			if(proceed) {
 				while(!logged) {
 				System.out.println("Por favor, introduzca su nombre de usuario:");
@@ -55,7 +64,7 @@ public class main {
 					System.out.println("");
 				}
 				else {
-					logged = UserEngine.login(userinput,userinput2);//acabar el metodo de login...
+					logged = UserEngine.login(userinput,userinput2);
 					currentUser = userinput;
 				}
 				}//fin de login (logged)
@@ -74,10 +83,10 @@ public class main {
 					userinput = input.nextLine();
 					switch(userinput) { //ejecuta la opción necesaria
 						case"0":
-							UserEngine.userLister(currentRole); //terminar
+							UserEngine.userLister(currentRole);
 						break;
 						case"1":
-							FilmEngine.filmLister(currentRole); //terminar
+							FilmEngine.filmLister(currentRole);
 						break;
 						case"2":
 							System.out.println("");
@@ -101,7 +110,7 @@ public class main {
 							data[4]=input.nextLine();
 							System.out.println("Escribe una breve descripción/sinopsis sobre la película (Por defecto: Sin especificar)");
 							data[5]=input.nextLine();
-							FilmEngine.filmBuilder(currentRole, data[0], data[1], data[2], data[3], data[4], data[5]);//insercion con hibernate
+							FilmEngine.filmBuilder(currentRole, data[0], data[1], data[2], data[3], data[4], data[5]);
 							for(int i=0; i<6; i++) {//limpieza del array
 								data[i]="";
 							}
@@ -128,7 +137,7 @@ public class main {
 							System.out.println("Confirma la nueva contraseña:");
 							userinput2 = input.nextLine();
 							if(userinput.equals(userinput2)) {
-								UserEngine.passwordUpdate(userinput);//TERMINAR...
+								UserEngine.passwordUpdate(userinput);
 							}
 							else {
 							System.out.println("Error al cambiar la contraseña: las contraseñas no coinciden.");
@@ -147,7 +156,7 @@ public class main {
 							System.out.println("Inserta el rol del usuario [1)'ADMIN', 2)'USERA', 3)'USERL']");
 							System.out.println("(Escribe el nombre del ROL conforme se muestra o el número correspondiente, por defecto: USERL)");
 							data[3]=input.nextLine();
-							if(data[1].equals(1)) {
+							if(data[1].equals(data[2])) {
 								UserEngine.userBuilder(currentRole, data[0], data[1], data[3]);//TERMNINAR
 							}
 							else {
