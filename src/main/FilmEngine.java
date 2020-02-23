@@ -62,7 +62,7 @@ public class FilmEngine {
 			System.out.println("Error: Debes especificar un nombre...");
 			goodtogo = false;
 		}
-		//comprobacion de enteros
+		//comprobacion de enteros y valores por defecto.
 		if (!genero.matches("[0-9]+")) {
 			genero = "1";
 		}
@@ -79,6 +79,9 @@ public class FilmEngine {
 			fmt = "1";
 		}
 		else {conv = Integer.parseInt(fmt); if(conv>5||conv<5) {fmt="1";}}
+		if (descripcion.equals("")) {
+			descripcion="Sin especificar.";
+		}
 		if(permiso==1||permiso==2) {
 			//comprobacion pelicula existe
 			try {
@@ -107,7 +110,7 @@ public class FilmEngine {
 						session.close();
 						}
 					catch(Exception e) {
-						System.out.println("1");
+						System.out.println("Error al acceder");
 					}
 					finally {
 						if(factory_director!=null) {
@@ -134,7 +137,7 @@ public class FilmEngine {
 						System.out.println("La pelicula se insertó correctamente");
 						}
 					catch(Exception e) {
-						System.out.println("2");
+						System.out.println("Error al acceder");
 					}
 					finally {
 						if(factory_pelicula!=null) {
@@ -143,7 +146,6 @@ public class FilmEngine {
 					}
 					//inscripcion en relacion n:n formato
 					try {
-						System.out.println("El id de la peli es "+pelid);
 						formato_pelicula relation = new formato_pelicula(pelid,Integer.parseInt(fmt));
 						session = factory_formato_p.getCurrentSession();
 						session.beginTransaction();
@@ -153,7 +155,7 @@ public class FilmEngine {
 						session.close();
 						}
 					catch(Exception e) {
-						System.out.println("3");
+						System.out.println("Error al acceder");
 					}
 					finally {
 						if(factory_formato_p!=null) {
@@ -164,7 +166,7 @@ public class FilmEngine {
 				else {System.out.println("Ya hay una pelicula con ese nombre y fecha, no puedes crear otra igual.");}
 				}
 			catch(Exception e) {
-				System.out.println("4");
+				System.out.println("Error al acceder");
 			}
 			finally {
 				if(factory_pelicula!=null) {

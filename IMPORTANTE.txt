@@ -1,3 +1,12 @@
 Se han de ejecutar los scripts de creacion de db y inserts para
 que el programa funcione con normalidad.
+
+no he conseguido desactivar los logs de hibernate, asi que en
+la consola se verá bastante actividad en rojo, pero evidentemente
+no se tratará de errores y la aplicacion seguirá funcionando correctamente.
+
 La carpeta resources a C:\DAM\ (el xml es de doble base de datos)
+
+El usuario por defecto(admin) es Jefe, pass: 12321
+
+He cumplido con todos los extra menos el de encriptar la contraseña.
